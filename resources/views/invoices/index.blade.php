@@ -23,12 +23,12 @@
                         <thead>
                             <tr>
                                 <th scope="col">S.No</th>
-                                <th scope="col">RM Name</th>
+                                <th scope="col">RM</th>
                                 <th scope="col">Package</th>
                                 <th scope="col">Brand</th>
                                 <th scope="col">Client Name</th>
                                 <th scope="col">Client Email</th>
-                                <th scope="col">Action</th>
+                                <!--<th scope="col">Action</th>-->
                             </tr>
                         </thead>
                         <tbody>
@@ -40,9 +40,9 @@
                                     </td>
                                     <td>
                                         @if ($invoice->is_customized)
-                                            Customized Package <b>({{ $invoice->customized_price }})</b>
+                                            Customized Package <b>({{ $invoice->FormattedCustomizedPrice }})</b>
                                         @else
-                                            {{ $invoice->package->name }} <b>(${{ $invoice->package->price }})</b>
+                                            {{ $invoice->package->name }}
                                         @endif
 
                                     </td>
@@ -55,12 +55,12 @@
                                     <td>
                                         {{ $invoice->client_email }}
                                     </td>
-                                    <td>
-                                        <a href="{{ Storage::path($invoice->pdf_path) }}" target="_blank"
-                                            class="btn btn-danger btn-sm">
-                                            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
-                                        </a>
-                                    </td>
+                                    <!--<td>-->
+                                    <!--    <a href="{{ asset('storage/' . $invoice->pdf_path) }}" target="_blank"-->
+                                    <!--        class="btn btn-danger btn-sm">-->
+                                    <!--        <i class="fa fa-file-pdf-o" aria-hidden="true"></i>-->
+                                    <!--    </a>-->
+                                    <!--</td>-->
                                 </tr>
                             @endforeach
                         </tbody>

@@ -17,7 +17,7 @@ class CreatePackagesTable extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->text('description')->nullable();
-            $table->enum('currency', ['$', '£'])->default('£');
+            $table->enum('currency', ['$', '£', '₨'])->default('£');
             $table->decimal('price', 10, 2);
             $table->timestamps();
         });

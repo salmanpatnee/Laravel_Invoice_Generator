@@ -56,6 +56,7 @@
                         class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm block mt-1 w-full">
                         <option {{ old('currency') == '£' ? 'selected' : '' }} value="£">£</option>
                         <option {{ old('currency') == '$' ? 'selected' : '' }} value="$">$</option>
+                        <option {{ old('currency') == '₨' ? 'selected' : '' }} value="₨">₨</option>
                     </select>
                 </div>
                 <div class="mt-4">
@@ -65,7 +66,12 @@
                 </div>
             </div>
 
-
+            <div class="mt-4">
+                <label class="block font-medium text-sm text-gray-700" for="vat"
+                    style="display: flex; align-items: center;">
+                    <input type="checkbox" name="vat" id="vat" value="1"> &nbsp; Add VAT
+                </label>
+            </div>
 
 
 

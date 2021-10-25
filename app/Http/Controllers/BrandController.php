@@ -68,12 +68,11 @@ class BrandController extends Controller
 
     protected function uploadThumbnail($image, $fileName)
     {
-
-        $file = 'images/brands/' . Str::slug($fileName, '-') . '.png';
-
+        
+        $file = '/images/brands' . Str::slug($fileName, '-') . '.png';
         $isUploaded = Image::make($image)->resize(300, null, function ($constraint) {
             $constraint->aspectRatio();
-        })->encode('png')->save($file);
+        })->encode('png')->save(public_path($file));
 
         return ($isUploaded) ? $file : false;
     }

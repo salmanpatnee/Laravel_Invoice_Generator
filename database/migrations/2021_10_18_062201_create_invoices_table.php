@@ -18,12 +18,14 @@ class CreateInvoicesTable extends Migration
             $table->string('invoice_no')->unique();
             $table->foreignId('user_id');
             $table->unsignedBigInteger('package_id')->nullable();
-            $table->foreignId('brand_id');
+            $table->unsignedBigInteger('brand_id');
             $table->string('client_name');
             $table->string('client_email');
             $table->boolean('is_customized')->default(0);
-            $table->enum('currency', ['$', '£'])->nullable();
+            $table->enum('currency', ['$', '£', '₨'])->nullable();
             $table->decimal('customized_price', 10, 2)->nullable();
+            $table->decimal('vat', 10, 2)->nullable();
+            $table->decimal('total', 10, 2)->nullable();
             $table->string('pdf_path')->nullable();
             $table->timestamps();
         });

@@ -15,7 +15,7 @@ class InvoiceController extends Controller
 {
     public function index()
     {
-        $invoices =  Invoice::latest()->paginate(20);
+        $invoices =  Invoice::orderBy('invoice_no', 'desc')->paginate(20);
 
         return view('invoices.index', compact('invoices'));
     }
@@ -33,6 +33,8 @@ class InvoiceController extends Controller
 
     public function store()
     {
+        // dd();
+
         $record = auth()->user()->invoices()->create($this->validateAttributes());
 
 
@@ -57,6 +59,7 @@ class InvoiceController extends Controller
         ];
         $notes = implode("<br>", $notes);
 
+        $vat = request()->has('vat') ? 20 : 0;
 
         $invoice = LDInvoice::make()
             ->buyer($customer)
@@ -65,6 +68,7 @@ class InvoiceController extends Controller
             ->sequence($record->id)
             ->addItem($item)
             ->currencySymbol($record->packageCurrency)
+            ->taxRate($vat)
             ->notes($notes)
             ->filename('Invoice-' . date('Y') . '-' . str_pad($record->id, 4, '0', STR_PAD_LEFT))
             ->save('public');
@@ -85,7 +89,8 @@ class InvoiceController extends Controller
                 'client_name'      => 'required|string|min:3|max:255',
                 'client_email'     => 'required|email|max:255',
                 'is_customized'    => 'nullable|boolean',
-                'currency'         => 'nullable|required_if:package_id,custom_package|in:$,£',
+                'vat'              => 'nullable|boolean',
+                'currency'         => 'nullable|required_if:package_id,custom_package|in:$,£,₨',
                 'customized_price' => 'nullable|required_if:package_id,custom_package|numeric',
             ],
             [

@@ -59,7 +59,7 @@ class PackageController extends Controller
                 'name'        => ['required', Rule::unique('packages', 'name')->ignore($package), 'min:3', 'max:255'],
                 'description' => 'nullable|string|max:255',
                 'price'       => 'required|numeric',
-                'currency'    => 'required|in:$,£'
+                'currency'    => 'required|in:$,£,₨'
             ]
         );
     }

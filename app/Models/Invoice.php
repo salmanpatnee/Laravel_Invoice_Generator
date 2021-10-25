@@ -24,6 +24,8 @@ class Invoice extends Model
         'is_customized',
         'currency',
         'customized_price',
+        'vat',
+        'total',
         'pdf_path',
     ];
 
@@ -35,6 +37,27 @@ class Invoice extends Model
 
         static::created(function ($invoice) {
             $invoice->update(['pdf_path' => 'Invoice-' . date('Y') . '-' . str_pad($invoice->id, 4, '0', STR_PAD_LEFT) . '.pdf']);
+            $vat = 0;
+            $total = 0;
+
+            // Setting up vat value
+            if (!is_null($invoice->vat)) {
+                if ($invoice->is_customized) {
+                    $vat = ($invoice->customized_price * 20) / 100;
+                    $total = $invoice->customized_price + $vat;
+                } else {
+                    $vat = ($invoice->package->price * 20) / 100;
+                    $total = $invoice->package->price + $vat;
+                }
+            } else {
+                $total = $invoice->is_customized ?  $invoice->customized_price : $invoice->package->price;
+            }
+
+            $invoice->update(['vat' => $vat]);
+
+
+            // Setting up total value
+            $invoice->update(['total' => $total]);
         });
     }
 
@@ -64,6 +87,12 @@ class Invoice extends Model
             return $this->package->currency;
         }
     }
+
+    public function getFormattedCustomizedPriceAttribute()
+    {
+        if ($this->is_customized) return $this->currency . $this->customized_price;
+    }
+
 
 
     public function package()
