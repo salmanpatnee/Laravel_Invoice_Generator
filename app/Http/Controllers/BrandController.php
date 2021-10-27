@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
-use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -49,7 +48,7 @@ class BrandController extends Controller
         $attributes['logo'] = $attributes['old_logo'];
 
         if (request()->has('logo')) {
-            $this->deleteImage($attributes['logo']);
+            File::delete($attributes['logo']);
             $file = $this->uploadThumbnail(request()->file('logo'), $attributes['name']);
             $attributes['logo'] = $file;
         }
@@ -61,15 +60,18 @@ class BrandController extends Controller
 
     public function destroy(Brand $brand)
     {
-        $this->deleteImage($brand->logo);
+        File::delete($brand->logo);
+
         $brand->delete();
+
         return redirect(route('brands.index'))->with('message', 'Brand deleted.');
     }
 
     protected function uploadThumbnail($image, $fileName)
     {
-        
+
         $file = '/images/brands' . Str::slug($fileName, '-') . '.png';
+
         $isUploaded = Image::make($image)->resize(300, null, function ($constraint) {
             $constraint->aspectRatio();
         })->encode('png')->save(public_path($file));
@@ -77,17 +79,12 @@ class BrandController extends Controller
         return ($isUploaded) ? $file : false;
     }
 
-    protected function deleteImage($path = null)
-    {
-        File::delete($path);
-    }
-
     protected function validateAttributes(Brand $brand = null)
     {
 
         return request()->validate(
             [
-                'name'      => ['required', Rule::unique('brands', 'name')->ignore($brand), 'min:3', 'max:255'],
+                'name'     => ['required', Rule::unique('brands', 'name')->ignore($brand), 'min:3', 'max:255'],
                 'logo'     => 'image|mimes:jpg,jpeg,webp,png|max:2048',
                 'old_logo' => 'string'
             ]

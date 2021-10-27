@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\InvoiceTrait;
 
 class Invoice extends Model
 {
     use HasFactory;
+    use InvoiceTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -36,17 +38,19 @@ class Invoice extends Model
         parent::boot();
 
         static::created(function ($invoice) {
-            $invoice->update(['pdf_path' => 'Invoice-' . date('Y') . '-' . str_pad($invoice->id, 4, '0', STR_PAD_LEFT) . '.pdf']);
-            $vat = 0;
+
+            $invoice->update(['pdf_path' => self::getInvoicePath($invoice->id)]);
+
+            $vat   = 0;
             $total = 0;
 
             // Setting up vat value
             if (!is_null($invoice->vat)) {
                 if ($invoice->is_customized) {
-                    $vat = ($invoice->customized_price * 20) / 100;
+                    $vat   = ($invoice->customized_price * 20) / 100;
                     $total = $invoice->customized_price + $vat;
                 } else {
-                    $vat = ($invoice->package->price * 20) / 100;
+                    $vat   = ($invoice->package->price * 20) / 100;
                     $total = $invoice->package->price + $vat;
                 }
             } else {
@@ -55,22 +59,9 @@ class Invoice extends Model
 
             $invoice->update(['vat' => $vat]);
 
-
-            // Setting up total value
+            // Setting up total
             $invoice->update(['total' => $total]);
         });
-    }
-
-
-    public function setInvoiceNoAttribute($value)
-    {
-        $lastRecord = $this::latest()->first();
-
-        $id = is_null($lastRecord) ? 1 : ($lastRecord->id + 1);
-
-        $invoiceNo = Date('Y') . '-' . str_pad($id, 4, '0', STR_PAD_LEFT);
-
-        $this->attributes['invoice_no'] = $invoiceNo;
     }
 
     public function setPackageIdAttribute($value)
@@ -81,19 +72,13 @@ class Invoice extends Model
 
     public function getPackageCurrencyAttribute()
     {
-        if ($this->is_customized) {
-            return $this->currency;
-        } else {
-            return $this->package->currency;
-        }
+        return $this->is_customized ? $this->currency : $this->package->currency;
     }
 
     public function getFormattedCustomizedPriceAttribute()
     {
         if ($this->is_customized) return $this->currency . $this->customized_price;
     }
-
-
 
     public function package()
     {

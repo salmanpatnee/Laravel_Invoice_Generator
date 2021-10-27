@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Invoice;
 use App\Models\Package;
-use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use LaravelDaily\Invoices\Invoice as LDInvoice;
 use LaravelDaily\Invoices\Classes\Buyer;
@@ -23,7 +22,7 @@ class InvoiceController extends Controller
     public function create()
     {
         $packages = Package::orderBy('name', 'asc')->get();
-        $brands = Brand::orderBy('name', 'asc')->get();
+        $brands   = Brand::orderBy('name', 'asc')->get();
 
         return view('invoices.create', [
             'packages' => $packages,
@@ -33,17 +32,19 @@ class InvoiceController extends Controller
 
     public function store()
     {
-        // dd();
-
         $record = auth()->user()->invoices()->create($this->validateAttributes());
 
+        $invoice = $this->generateInvoicePdf($record);
 
+        return $invoice->download();
+    }
+
+    protected function generateInvoicePdf(Invoice $record)
+    {
         // Customer details
         $customer = new Buyer([
             'name'          => $record->client_name,
-            'custom_fields' => [
-                'email' => $record->client_email,
-            ],
+            'custom_fields' => ['email' => $record->client_email],
         ]);
 
         // Purchased items/services
@@ -54,11 +55,10 @@ class InvoiceController extends Controller
         }
 
         // Additional notes
-        $notes = [
-            'in regards of delivery or something else',
-        ];
+        $notes = ['in regards of delivery or something else'];
         $notes = implode("<br>", $notes);
 
+        // Applying vat
         $vat = request()->has('vat') ? 20 : 0;
 
         $invoice = LDInvoice::make()
@@ -73,10 +73,8 @@ class InvoiceController extends Controller
             ->filename('Invoice-' . date('Y') . '-' . str_pad($record->id, 4, '0', STR_PAD_LEFT))
             ->save('public');
 
-        return $invoice->download();
+        return $invoice;
     }
-
-
 
     protected function validateAttributes(Invoice $invoice = null)
     {

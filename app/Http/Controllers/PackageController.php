@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Package;
-use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class PackageController extends Controller

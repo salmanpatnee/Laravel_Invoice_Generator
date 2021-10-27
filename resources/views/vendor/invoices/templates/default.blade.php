@@ -151,14 +151,17 @@
                     <th scope="col" class="text-center border-0">{{ __('invoices::invoice.units') }}</th>
                 @endif
                 <th scope="col" class="text-center border-0">{{ __('invoices::invoice.quantity') }}</th>
-                <th scope="col" class="text-right border-0">{{ __('invoices::invoice.price') }}</th>
+                <th scope="col" style="text-align:center;" class="text-right border-0">
+                    {{ __('invoices::invoice.price') }}</th>
                 @if ($invoice->hasItemDiscount)
                     <th scope="col" class="text-right border-0">{{ __('invoices::invoice.discount') }}</th>
                 @endif
                 @if ($invoice->hasItemTax != 0)
-                    <th scope="col" class="text-right border-0">{{ __('invoices::invoice.tax') }}</th>
+                    <th scope="col" style="text-align:center;" class="text-right border-0">
+                        {{ __('invoices::invoice.tax') }}</th>
                 @endif
-                <th scope="col" class="text-right border-0 pr-0">{{ __('invoices::invoice.sub_total') }}</th>
+                <th scope="col" style="text-align:center;" class="text-right border-0 pr-0">
+                    {{ __('invoices::invoice.sub_total') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -259,17 +262,17 @@
 
     <script type="text/php">
         if (isset($pdf) && $PAGE_COUNT > 1) {
-                                                                                                                                                                                                                                                                                                    $text = "Page {PAGE_NUM} / {PAGE_COUNT}";
-                                                                                                                                                                                                                                                                                                    $size = 10;
-                                                                                                                                                                                                                                                                                                    $font = $fontMetrics->getFont("Verdana");
-                                                                                                                                                                                                                                                                                                    $width = $fontMetrics->get_text_width($text, $font, $size) / 2;
-                                                                                                                                                                                                                                                                                                    $x = ($pdf->get_width() - $width);
-                                                                                                                                                                                                                                                                                                    $y = $pdf->get_height() - 35;
-                                                                                                                                                                                                                                                                                                    $pdf->page_text($x, $y, $text, $font, $size);
-                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                            
-                                                                                                                                                                            
-                                                            </script>
+                                                                                                                                                                                                                                                                                                            $text = "Page {PAGE_NUM} / {PAGE_COUNT}";
+                                                                                                                                                                                                                                                                                                            $size = 10;
+                                                                                                                                                                                                                                                                                                            $font = $fontMetrics->getFont("Verdana");
+                                                                                                                                                                                                                                                                                                            $width = $fontMetrics->get_text_width($text, $font, $size) / 2;
+                                                                                                                                                                                                                                                                                                            $x = ($pdf->get_width() - $width);
+                                                                                                                                                                                                                                                                                                            $y = $pdf->get_height() - 35;
+                                                                                                                                                                                                                                                                                                            $pdf->page_text($x, $y, $text, $font, $size);
+                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                    
+                                                                    </script>
 </body>
 
 </html>
